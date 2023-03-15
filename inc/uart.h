@@ -36,4 +36,6 @@ void uart_putchar(int ch);
 void uart_puts(const char* str);
 int uart_getchar();
 
+#define UART_DEBUG_PRINT(string) uart_puts(__FILE__ " " string);
+
 #endif

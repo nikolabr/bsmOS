@@ -39,3 +39,8 @@
 CSRR_FUNC(sstatus)
 CSRR_FUNC(sie)
 CSRR_FUNC(stvec)
+
+CSRW_FUNC(stvec)
+
+CSRR_FUNC(sepc)
+CSRW_FUNC(sepc)

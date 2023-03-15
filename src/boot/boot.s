@@ -2,7 +2,6 @@
 .option norvc
 
 .section .text.init
-
 .global _start
 _start:
     
@@ -31,10 +30,13 @@ bss_clear_loop:
 	bltu	a0, a1, bss_clear_loop
 	
 bss_clear_complete:
-	
+	# Set boot trap vector in case something goes wrong
+	la t2, boot_trap_vector
+	csrw mtvec, t2
+		
+setup_pmp:
 	# PMP must be set up before entering S mode
 	# Set entirety of memory to be RWX
-setup_pmp:
 	li t0, 0xFFFFFFFFFFFFFF
 	csrw pmpaddr0, t0
 	
@@ -51,11 +53,12 @@ context_switch:
 	# Set MPP to S mode
 	li t1, (0b01 << 11)
 	csrs mstatus, t1
-	
-	# Set boot trap vector in case something goes wrong
-	la t2, boot_trap_vector
-	csrw mtvec, t2
 
+	# Delegate all traps and interrupts to S mode
+	li t2, -1
+	csrs mideleg, t2
+	csrs medeleg, t2
+	
 	mret
 
 	.align 4
@@ -68,6 +71,7 @@ idle_hart:
 	j idle_hart
 
 	.align 4
+	
 boot_trap_vector:
 	csrr t0, mepc
 	csrr t1, mcause
