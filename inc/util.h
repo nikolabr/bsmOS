@@ -1,10 +1,9 @@
 #ifndef _UTIL_H
 #define _UTIL_H
 
-void debug_assert(int val) {
-  if (!val) {
-    __asm__("sbrk");
-  }
-}
+#define DEBUG_ASSERT(val)   \
+  if (!val) {		    \
+    __asm__("ebreak");	    \
+  }			    \
     
 #endif
